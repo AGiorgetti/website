@@ -6,16 +6,17 @@ import { expressConfig } from './config/express';
 import * as express from 'express';
 import * as _ from 'underscore';
 
-class Startup extends loggerBaseClass {
+class startup extends loggerBaseClass {
     private app: express.Express;
 
     constructor() {
-        
-        this.parseEnvironment();
-        this.configureLogger();
 
+        this.parseEnvironment();
+ 
         super();
 
+        this.logger.info("Logger Up & Running....");
+        this.logger.info("Environment: " + (environment.isDevEnvironment ? 'Dev' : 'Production'));
         this.configureExpress();
     }
 
@@ -25,16 +26,10 @@ class Startup extends loggerBaseClass {
                 return true;
             }
         });
-
-        global.env = (env !== undefined)
+       
+        environment.env = (env !== undefined)
             ? env.substr(4, 3)
             : 'prod';
-    }
-
-    private configureLogger() {
-        loggerFactory.configure();
-        this.logger.info("Logger Up & Running....");
-        this.logger.info("Environment: " + (environment.isDevEnvironment ? 'Dev' : 'Production'));
     }
 
     private configureExpress() {
@@ -45,17 +40,17 @@ class Startup extends loggerBaseClass {
         this.logger.info("Express configured");
     }
 
-    public Run() {
+    public run() {
         var port = process.env.port || 5000;
 
-        this.app.listen(port, function() {
+        this.app.listen(port, () => {
             this.logger.info("Listening on " + port);
         });
     }
 }
 
-var srt = new Startup();
-srt.Run();
+var srt = new startup();
+srt.run();
 
 
 
